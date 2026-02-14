@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Belanja & Keuangan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- BACKGROUND MAKANAN -->
+    <div class="food-bg">
+        <div class="food-items">
+            <i class="fas fa-pizza-slice"></i>
+            <i class="fas fa-hamburger"></i>
+            <i class="fas fa-coffee"></i>
+            <i class="fas fa-ice-cream"></i>
+            <i class="fas fa-fish"></i>
+            <i class="fas fa-apple-alt"></i>
+            <i class="fas fa-cocktail"></i>
+            <i class="fas fa-cake"></i>
+            <i class="fas fa-drumstick-bite"></i>
+            <i class="fas fa-bread-slice"></i>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-wallet"></i>
+                <h1>Sistem Belanja</h1>
+            </div>
+            <div class="header-right">
+                <button id="themeToggle" class="theme-btn"><i class="fas fa-moon"></i></button>
+                <div class="date-show" id="currentDate"></div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CARD -->
+        <div class="dashboard">
+            <div class="card saldo">
+                <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
+                <div class="card-info">
+                    <span class="card-label">Saldo</span>
+                    <span class="card-value" id="totalSaldo">Rp 0</span>
+                </div>
+            </div>
+            <div class="card pemasukan">
+                <div class="card-icon"><i class="fas fa-arrow-down"></i></div>
+                <div class="card-info">
+                    <span class="card-label">Pemasukan</span>
+                    <span class="card-value" id="totalPemasukan">Rp 0</span>
+                </div>
+            </div>
+            <div class="card pengeluaran">
+                <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
+                <div class="card-info">
+                    <span class="card-label">Pengeluaran</span>
+                    <span class="card-value" id="totalPengeluaran">Rp 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM TAMBAH (BERBEDA TAMPILAN) -->
+        <div class="form-section">
+            <h2 class="section-title"><i class="fas fa-plus-circle"></i> Tambah Transaksi</h2>
+            <form id="transactionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Tanggal</label>
+                        <input type="date" id="tanggal" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Kategori</label>
+                        <select id="kategori" required>
+                            <optgroup label="PEMASUKAN">
+                                <option value="Gaji">💼 Gaji</option>
+                                <option value="Bonus">🎁 Bonus</option>
+                            </optgroup>
+                            <optgroup label="PENGELUARAN">
+                                <option value="Makanan">🍔 Makanan</option>
+                                <option value="Minuman">🥤 Minuman</option>
+                                <option value="Transport">🚗 Transport</option>
+                                <option value="Belanja">🛒 Belanja</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-pen"></i> Keterangan</label>
+                        <input type="text" id="keterangan" placeholder="Mis: Nasi goreng" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-money-bill"></i> Jumlah</label>
+                        <input type="number" id="jumlah" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-exchange-alt"></i> Tipe</label>
+                        <select id="tipe" required>
+                            <option value="pemasukan">💚 PEMASUKAN</option>
+                            <option value="pengeluaran">❤️ PENGELUARAN</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-add">SIMPAN</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- FILTER SECTION -->
+        <div class="filter-section">
+            <div class="filter-header" onclick="toggleFilter()">
+                <h3><i class="fas fa-filter"></i> Filter & Cari</h3>
+                <i class="fas fa-chevron-down" id="filterArrow"></i>
+            </div>
+            <div class="filter-content" id="filterContent">
+                <div class="filter-grid">
+                    <select id="filterType">
+                        <option value="all">Semua</option>
+                        <option value="today">Hari Ini</option>
+                        <option value="week">Minggu Ini</option>
+                        <option value="month">Bulan Ini</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="Cari...">
+                    <div class="custom-range" id="customRange">
+                        <input type="date" id="startDate">
+                        <span>-</span>
+                        <input type="date" id="endDate">
+                        <button id="applyFilter" class="btn-small">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATISTIK CEPAT (HANYA DI HP & TAB) -->
+        <div class="quick-stats">
+            <div class="quick-stat">
+                <span>Rata² Harian</span>
+                <strong id="avgDaily">Rp 0</strong>
+            </div>
+            <div class="quick-stat">
+                <span>Top Kategori</span>
+                <strong id="topCategory">-</strong>
+            </div>
+        </div>
+
+        <!-- CHART (HANYA DI LAPTOP) -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>Pengeluaran per Kategori</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Tren Bulanan</h3>
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- TABEL TRANSAKSI -->
+        <div class="table-section">
+            <div class="table-header">
+                <h2><i class="fas fa-list"></i> Riwayat Transaksi</h2>
+                <div class="table-actions">
+                    <button id="printBtn" class="btn-icon"><i class="fas fa-print"></i></button>
+                    <button id="pdfBtn" class="btn-icon"><i class="fas fa-file-pdf"></i></button>
+                    <button id="resetBtn" class="btn-icon btn-danger"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="transactionTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tgl</th>
+                            <th>Kat</th>
+                            <th>Ket</th>
+                            <th>Tipe</th>
+                            <th>Jumlah</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5">TOTAL</th>
+                            <th id="footerTotal">Rp 0</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- REKOMENDASI MAKANAN -->
+        <div class="food-recommend" id="foodRecommend">
+            🍔 Rekomendasi: Burger
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>© 2026 | <span id="footerYear"></span></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
