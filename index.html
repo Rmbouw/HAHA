@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramadan 1447H</title>
+    <title>Jadwal Ramadan 1447H Presisi</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -39,28 +39,30 @@
 
         header h1 {
             font-family: 'Amiri', serif;
-            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-size: clamp(2rem, 7vw, 3.5rem);
             color: var(--gold);
+            line-height: 1.2;
         }
 
-        .digital-clock {
-            background: var(--gold);
-            color: #000;
+        .digital-clock-container {
+            background: var(--glass);
+            border: 2px solid var(--gold);
             padding: 10px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.2rem;
+            border-radius: 20px;
             display: inline-block;
-            margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(252, 207, 62, 0.3);
+            margin-top: 15px;
+            backdrop-filter: blur(10px);
         }
+
+        #txtZoneName { display: block; font-size: 0.7rem; letter-spacing: 2px; opacity: 0.8; }
+        #txtClock { font-size: 2rem; font-weight: 600; color: var(--gold); font-family: monospace; }
 
         .dashboard {
             width: 100%;
             max-width: 900px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
             margin-bottom: 30px;
         }
 
@@ -70,11 +72,10 @@
             border-radius: 15px;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
         }
 
-        .time-card span { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; display: block; }
-        .time-card b { font-size: 1.4rem; letter-spacing: 1px; }
+        .time-card span { color: var(--gold); font-size: 0.7rem; text-transform: uppercase; display: block; }
+        .time-card b { font-size: 1.2rem; }
 
         .table-container {
             width: 100%;
@@ -83,42 +84,16 @@
             border-radius: 20px;
             overflow: hidden;
             border: 1px solid rgba(252, 207, 62, 0.2);
-            backdrop-filter: blur(15px);
         }
 
-        .scroll-hint {
-            display: none;
-            text-align: center;
-            font-size: 0.7rem;
-            padding: 5px;
-            background: rgba(252, 207, 62, 0.2);
-            color: var(--gold);
-        }
-
-        .table-responsive {
-            overflow-x: auto; 
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px; 
-        }
-
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
         th { background: rgba(252, 207, 62, 0.1); color: var(--gold); padding: 15px; font-size: 0.8rem; }
-        td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-        .hidden-row { display: none; }
-        .active-expand .hidden-row { display: table-row; animation: slideDown 0.4s ease-out; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
         .row-today { background: rgba(252, 207, 62, 0.2); border-left: 4px solid var(--gold); }
-
-        /* Tombol */
-        .footer-table {
-            padding: 20px;
-            text-align: center;
-            background: rgba(0,0,0,0.3);
-        }
+        .hidden-row { display: none; }
+        .active-expand .hidden-row { display: table-row; }
 
         #btnToggle {
             background: transparent;
@@ -127,37 +102,34 @@
             padding: 10px 30px;
             border-radius: 30px;
             cursor: pointer;
-            font-weight: 600;
+            margin: 20px;
             transition: 0.3s;
         }
 
         #btnToggle:hover { background: var(--gold); color: black; }
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 600px) {
-            header h1 { font-size: 2.2rem; }
-            .scroll-hint { display: block; } 
-            .time-card b { font-size: 1.1rem; }
-        }
+.time-card.active {
+    border: 1.5px solid var(--gold) !important;
+    box-shadow: 0 0 8px rgba(252, 207, 62, 0.6);
+    transform: scale(1.03);
+    transition: 0.3s ease;
+}
     </style>
 </head>
 <body>
 
     <header>
         <p id="txtDate"></p>
-        <h1><i class="fa-solid fa-kaaba"></i> Imsakiyah 1447H<br>Ramadan Kareem</h1>
-        <div class="digital-clock" id="txtClock">00:00:00</div>
+        <h1><i class="fa-solid fa-kaaba"></i> RAMADAN KAREEM<br>1447 H</h1>
+        <div class="digital-clock-container">
+            <span id="txtZoneName">Mendeteksi Waktu...</span>
+            <div id="txtClock">00:00:00</div>
+        </div>
     </header>
 
-    <div class="dashboard" id="dashToday">
-        </div>
+    <div class="dashboard" id="dashToday"></div>
 
     <div class="table-container" id="scheduleWrapper">
-        <div class="scroll-hint"><i class="fa-solid fa-arrows-left-right"></i> Geser tabel ke samping</div>
         <div class="table-responsive">
             <table>
                 <thead>
@@ -166,6 +138,7 @@
                         <th>Masehi</th>
                         <th>Imsak</th>
                         <th>Subuh</th>
+                        <th>Terbit</th>
                         <th>Dzuhur</th>
                         <th>Ashar</th>
                         <th>Maghrib</th>
@@ -175,100 +148,154 @@
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
-        
-        <div class="footer-table">
-            <button id="btnToggle" onclick="handleToggle()">
-                <i class="fa-solid fa-chevron-down"></i> Lihat Selengkapnya
-            </button>
+        <div style="text-align: center;">
+            <button id="btnToggle" onclick="handleToggle()">Lihat selenkapnya</button>
         </div>
     </div>
 
-    <footer style="margin-top: 40px; opacity: 0.5; font-size: 0.8rem; text-align: center;">
-        <p>&copy; Ramadhan 2026, editon by Agussaleh Rumbouw</p>
-    </footer>
-
     <script>
-        const startDay = new Date(2026, 1, 21); 
-        const refMaghrib = "18:16"; 
+        const refDate = 22; 
+        const baseSchedule = {
+            imsak: "04:30",
+            subuh: "04:40",
+            terbit: "05:54",
+            dzuhur: "12:08",
+            ashar: "15:16",
+            maghrib: "18:16",
+            isya: "19:26"
+        };
 
         function addMins(timeStr, mins) {
             let [h, m] = timeStr.split(':').map(Number);
             let total = h * 60 + m + mins;
             let nH = Math.floor(total / 60) % 24;
             let nM = total % 60;
+            if (nH < 0) nH += 24;
             return `${String(nH).padStart(2, '0')}:${String(nM).padStart(2, '0')}`;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('txtClock').innerText = now.toLocaleTimeString('id-ID', {hour12:false});
+            document.getElementById('txtDate').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            const zone = new Intl.DateTimeFormat('id-ID', {timeZoneName:'short'}).formatToParts(now).find(p=>p.type==='timeZoneName').value;
+            document.getElementById('txtZoneName').innerText = "WAKTU LOKAL (" + zone + ")";
         }
 
         function initApp() {
             const body = document.getElementById('tableBody');
             const dash = document.getElementById('dashToday');
-            const todayISO = new Date().toISOString().split('T')[0];
+            const startDay = new Date(2026, 1, 19);
+            const todayStr = new Date().toISOString().split('T')[0];
 
             for (let i = 0; i < 30; i++) {
                 let curr = new Date(startDay);
                 curr.setDate(startDay.getDate() + i);
+                let dayMasehi = curr.getDate();
                 let iso = curr.toISOString().split('T')[0];
+                let diff = dayMasehi - refDate;
+                let offset = Math.floor(diff / 2); 
 
-                let maghrib = addMins(refMaghrib, Math.floor(i * -0.1));
-                let imsak = addMins(maghrib, -828);
-                let subuh = addMins(imsak, 10);
-                let dzuhur = addMins(maghrib, -365);
-                let ashar = addMins(maghrib, -185);
-                let isya = addMins(maghrib, 72);
+                let sch = {
+                    imsak: addMins(baseSchedule.imsak, -offset),
+                    subuh: addMins(baseSchedule.subuh, -offset),
+                    terbit: addMins(baseSchedule.terbit, -offset),
+                    dzuhur: addMins(baseSchedule.dzuhur, -offset),
+                    ashar: addMins(baseSchedule.ashar, -offset),
+                    maghrib: addMins(baseSchedule.maghrib, -offset),
+                    isya: addMins(baseSchedule.isya, -offset)
+                };
 
-                let isToday = (iso === todayISO);
+                let isToday = (iso === todayStr);
                 let rowClass = isToday ? 'row-today' : (i > 6 ? 'hidden-row' : '');
 
                 body.innerHTML += `
                     <tr class="${rowClass}">
                         <td><b>${i+1}</b></td>
                         <td>${curr.toLocaleDateString('id-ID', {day:'numeric', month:'short'})}</td>
-                        <td>${imsak}</td>
-                        <td>${subuh}</td>
-                        <td>${dzuhur}</td>
-                        <td>${ashar}</td>
-                        <td style="color:var(--gold); font-weight:bold">${maghrib}</td>
-                        <td>${isya}</td>
+                        <td>${sch.imsak}</td>
+                        <td>${sch.subuh}</td>
+                        <td>${sch.terbit}</td>
+                        <td>${sch.dzuhur}</td>
+                        <td>${sch.ashar}</td>
+                        <td style="color:var(--gold); font-weight:bold">${sch.maghrib}</td>
+                        <td>${sch.isya}</td>
                     </tr>
                 `;
 
                 if(isToday) {
                     dash.innerHTML = `
-                        <div class="time-card"><span>Imsak</span><b>${imsak}</b></div>
-                        <div class="time-card"><span>Subuh</span><b>${subuh}</b></div>
-                        <div class="time-card"><span>Dzuhur</span><b>${dzuhur}</b></div>
-                        <div class="time-card"><span>Ashar</span><b>${ashar}</b></div>
-                        <div class="time-card" style="border:1px solid var(--gold)"><span>Maghrib</span><b>${maghrib}</b></div>
-                        <div class="time-card"><span>Isya</span><b>${isya}</b></div>
+                        <div class="time-card"><span>Imsak</span><b>${sch.imsak}</b></div>
+                        <div class="time-card"><span>Subuh</span><b>${sch.subuh}</b></div>
+                        <div class="time-card"><span>Dzuhur</span><b>${sch.dzuhur}</b></div>
+                        <div class="time-card"><span>Ashar</span><b>${sch.ashar}</b></div>
+                        <div class="time-card" style="border:1px solid var(--gold)"><span>Maghrib</span><b>${sch.maghrib}</b></div>
+                        <div class="time-card"><span>Isya</span><b>${sch.isya}</b></div>
                     `;
                 }
             }
+            if(!dash.innerHTML) dash.innerHTML = `<div style="grid-column:1/-1; text-align:center;">Jadwal Ramadan 1447H</div>`;
         }
 
         let expanded = false;
         function handleToggle() {
             const wrapper = document.getElementById('scheduleWrapper');
-            const btn = document.getElementById('btnToggle');
             expanded = !expanded;
-
-            if(expanded) {
-                wrapper.classList.add('active-expand');
-                btn.innerHTML = '<i class="fa-solid fa-chevron-up"></i> Sembunyikan';
-            } else {
-                wrapper.classList.remove('active-expand');
-                btn.innerHTML = '<i class="fa-solid fa-chevron-down"></i> Lihat Selengkapnya';
-                window.scrollTo({ top: wrapper.offsetTop - 50, behavior: 'smooth' });
-            }
+            wrapper.classList.toggle('active-expand', expanded);
+            document.getElementById('btnToggle').innerText = expanded ? "Sembunyikan" : "Lihat 30 Hari";
         }
 
-        // JAM DIGITAL
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('txtClock').innerText = now.toLocaleTimeString('id-ID');
-            document.getElementById('txtDate').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-        }, 1000);
-
+        setInterval(updateClock, 1000);
+        updateClock();
         initApp();
+        function toMinute(t){
+    let [h,m] = t.split(':').map(Number);
+    return h * 60 + m;
+}
+
+function updateActivePrayer(){
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+
+    const cards = document.querySelectorAll('.time-card');
+    cards.forEach(c => c.classList.remove('active'));
+
+    const schedule = {
+        imsak  : document.querySelector('.time-card:nth-child(1) b')?.innerText,
+        subuh  : document.querySelector('.time-card:nth-child(2) b')?.innerText,
+        dzuhur : document.querySelector('.time-card:nth-child(3) b')?.innerText,
+        ashar  : document.querySelector('.time-card:nth-child(4) b')?.innerText,
+        maghrib: document.querySelector('.time-card:nth-child(5) b')?.innerText,
+        isya   : document.querySelector('.time-card:nth-child(6) b')?.innerText,
+    };
+
+    const order = [
+        ['imsak','subuh'],
+        ['subuh','dzuhur'],
+        ['dzuhur','ashar'],
+        ['ashar','maghrib'],
+        ['maghrib','isya'],
+        ['isya', null]
+    ];
+
+    for(let i=0;i<order.length;i++){
+        let start = schedule[order[i][0]];
+        let end   = schedule[order[i][1]];
+
+        if(!start) continue;
+
+        let startMin = toMinute(start);
+        let endMin = end ? toMinute(end) : 1440;
+
+        if(nowMin >= startMin && nowMin < endMin){
+            cards[i]?.classList.add('active');
+            break;
+        }
+    }
+}
+
+setInterval(updateActivePrayer, 1000);
+setTimeout(updateActivePrayer, 1000);
     </script>
 </body>
 </html>
