@@ -3,208 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Belanja & Keuangan</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Ramadan Digital Planner 1447H</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #fccf3e;
+            --white: #ffffff;
+            --glass: rgba(0, 0, 0, 0.85);
+            --bg-dark: #020617;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--white);
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+                        url('https://cdn.antaranews.com/cache/1200x800/2025/03/12/IMG_3240_1.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        header h1 {
+            font-family: 'Amiri', serif;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            color: var(--gold);
+        }
+
+        .digital-clock {
+            background: var(--gold);
+            color: #000;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: inline-block;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(252, 207, 62, 0.3);
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .time-card {
+            background: var(--glass);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .time-card span { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; display: block; }
+        .time-card b { font-size: 1.4rem; letter-spacing: 1px; }
+
+        .table-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--glass);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(252, 207, 62, 0.2);
+            backdrop-filter: blur(15px);
+        }
+
+        .scroll-hint {
+            display: none;
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 5px;
+            background: rgba(252, 207, 62, 0.2);
+            color: var(--gold);
+        }
+
+        .table-responsive {
+            overflow-x: auto; 
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; 
+        }
+
+        th { background: rgba(252, 207, 62, 0.1); color: var(--gold); padding: 15px; font-size: 0.8rem; }
+        td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .hidden-row { display: none; }
+        .active-expand .hidden-row { display: table-row; animation: slideDown 0.4s ease-out; }
+
+        .row-today { background: rgba(252, 207, 62, 0.2); border-left: 4px solid var(--gold); }
+
+        /* Tombol */
+        .footer-table {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+        }
+
+        #btnToggle {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 10px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        #btnToggle:hover { background: var(--gold); color: black; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 2.2rem; }
+            .scroll-hint { display: block; } 
+            .time-card b { font-size: 1.1rem; }
+        }
+    </style>
 </head>
 <body>
-    <!-- BACKGROUND MAKANAN -->
-    <div class="food-bg">
-        <div class="food-items">
-            <i class="fas fa-pizza-slice"></i>
-            <i class="fas fa-hamburger"></i>
-            <i class="fas fa-coffee"></i>
-            <i class="fas fa-ice-cream"></i>
-            <i class="fas fa-fish"></i>
-            <i class="fas fa-apple-alt"></i>
-            <i class="fas fa-cocktail"></i>
-            <i class="fas fa-cake"></i>
-            <i class="fas fa-drumstick-bite"></i>
-            <i class="fas fa-bread-slice"></i>
+
+    <header>
+        <p id="txtDate"></p>
+        <h1><i class="fa-solid fa-kaaba"></i> Imsakiyah 1447H<br>Ramadhan Karem</h1>
+        <div class="digital-clock" id="txtClock">00:00:00</div>
+    </header>
+
+    <div class="dashboard" id="dashToday">
+        </div>
+
+    <div class="table-container" id="scheduleWrapper">
+        <div class="scroll-hint"><i class="fa-solid fa-arrows-left-right"></i> Geser tabel ke samping</div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ramadan</th>
+                        <th>Masehi</th>
+                        <th>Imsak</th>
+                        <th>Subuh</th>
+                        <th>Dzuhur</th>
+                        <th>Ashar</th>
+                        <th>Maghrib</th>
+                        <th>Isya</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        
+        <div class="footer-table">
+            <button id="btnToggle" onclick="handleToggle()">
+                <i class="fa-solid fa-chevron-down"></i> Lihat Selengkapnya
+            </button>
         </div>
     </div>
 
-    <div class="container">
-        <!-- HEADER -->
-        <header>
-            <div class="logo">
-                <i class="fas fa-wallet"></i>
-                <h1>Sistem Belanja</h1>
-            </div>
-            <div class="header-right">
-                <button id="themeToggle" class="theme-btn"><i class="fas fa-moon"></i></button>
-                <div class="date-show" id="currentDate"></div>
-            </div>
-        </header>
+    <footer style="margin-top: 40px; opacity: 0.5; font-size: 0.8rem; text-align: center;">
+        <p>&copy; Ramadhan 2026, editon by Agussaleh Rumbouw</p>
+    </footer>
 
-        <!-- DASHBOARD CARD -->
-        <div class="dashboard">
-            <div class="card saldo">
-                <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
-                <div class="card-info">
-                    <span class="card-label">Saldo</span>
-                    <span class="card-value" id="totalSaldo">Rp 0</span>
-                </div>
-            </div>
-            <div class="card pemasukan">
-                <div class="card-icon"><i class="fas fa-arrow-down"></i></div>
-                <div class="card-info">
-                    <span class="card-label">Pemasukan</span>
-                    <span class="card-value" id="totalPemasukan">Rp 0</span>
-                </div>
-            </div>
-            <div class="card pengeluaran">
-                <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
-                <div class="card-info">
-                    <span class="card-label">Pengeluaran</span>
-                    <span class="card-value" id="totalPengeluaran">Rp 0</span>
-                </div>
-            </div>
-        </div>
+    <script>
+        const startDay = new Date(2026, 1, 21); 
+        const refMaghrib = "18:16"; 
 
-        <!-- FORM TAMBAH (BERBEDA TAMPILAN) -->
-        <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-plus-circle"></i> Tambah Transaksi</h2>
-            <form id="transactionForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label><i class="fas fa-calendar"></i> Tanggal</label>
-                        <input type="date" id="tanggal" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-tag"></i> Kategori</label>
-                        <select id="kategori" required>
-                            <optgroup label="PEMASUKAN">
-                                <option value="Gaji">💼 Gaji</option>
-                                <option value="Bonus">🎁 Bonus</option>
-                            </optgroup>
-                            <optgroup label="PENGELUARAN">
-                                <option value="Makanan">🍔 Makanan</option>
-                                <option value="Minuman">🥤 Minuman</option>
-                                <option value="Transport">🚗 Transport</option>
-                                <option value="Belanja">🛒 Belanja</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-pen"></i> Keterangan</label>
-                        <input type="text" id="keterangan" placeholder="Mis: Nasi goreng" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-money-bill"></i> Jumlah</label>
-                        <input type="number" id="jumlah" placeholder="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-exchange-alt"></i> Tipe</label>
-                        <select id="tipe" required>
-                            <option value="pemasukan">💚 PEMASUKAN</option>
-                            <option value="pengeluaran">❤️ PENGELUARAN</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn-add">SIMPAN</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+        function addMins(timeStr, mins) {
+            let [h, m] = timeStr.split(':').map(Number);
+            let total = h * 60 + m + mins;
+            let nH = Math.floor(total / 60) % 24;
+            let nM = total % 60;
+            return `${String(nH).padStart(2, '0')}:${String(nM).padStart(2, '0')}`;
+        }
 
-        <!-- FILTER SECTION -->
-        <div class="filter-section">
-            <div class="filter-header" onclick="toggleFilter()">
-                <h3><i class="fas fa-filter"></i> Filter & Cari</h3>
-                <i class="fas fa-chevron-down" id="filterArrow"></i>
-            </div>
-            <div class="filter-content" id="filterContent">
-                <div class="filter-grid">
-                    <select id="filterType">
-                        <option value="all">Semua</option>
-                        <option value="today">Hari Ini</option>
-                        <option value="week">Minggu Ini</option>
-                        <option value="month">Bulan Ini</option>
-                    </select>
-                    <input type="text" id="searchInput" placeholder="Cari...">
-                    <div class="custom-range" id="customRange">
-                        <input type="date" id="startDate">
-                        <span>-</span>
-                        <input type="date" id="endDate">
-                        <button id="applyFilter" class="btn-small">OK</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        function initApp() {
+            const body = document.getElementById('tableBody');
+            const dash = document.getElementById('dashToday');
+            const todayISO = new Date().toISOString().split('T')[0];
 
-        <!-- STATISTIK CEPAT (HANYA DI HP & TAB) -->
-        <div class="quick-stats">
-            <div class="quick-stat">
-                <span>Rata² Harian</span>
-                <strong id="avgDaily">Rp 0</strong>
-            </div>
-            <div class="quick-stat">
-                <span>Top Kategori</span>
-                <strong id="topCategory">-</strong>
-            </div>
-        </div>
+            for (let i = 0; i < 30; i++) {
+                let curr = new Date(startDay);
+                curr.setDate(startDay.getDate() + i);
+                let iso = curr.toISOString().split('T')[0];
 
-        <!-- CHART (HANYA DI LAPTOP) -->
-        <div class="charts-section">
-            <div class="chart-card">
-                <h3>Pengeluaran per Kategori</h3>
-                <canvas id="categoryChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Tren Bulanan</h3>
-                <canvas id="trendChart"></canvas>
-            </div>
-        </div>
+                let maghrib = addMins(refMaghrib, Math.floor(i * -0.1));
+                let imsak = addMins(maghrib, -828);
+                let subuh = addMins(imsak, 10);
+                let dzuhur = addMins(maghrib, -365);
+                let ashar = addMins(maghrib, -185);
+                let isya = addMins(maghrib, 72);
 
-        <!-- TABEL TRANSAKSI -->
-        <div class="table-section">
-            <div class="table-header">
-                <h2><i class="fas fa-list"></i> Riwayat Transaksi</h2>
-                <div class="table-actions">
-                    <button id="printBtn" class="btn-icon"><i class="fas fa-print"></i></button>
-                    <button id="pdfBtn" class="btn-icon"><i class="fas fa-file-pdf"></i></button>
-                    <button id="resetBtn" class="btn-icon btn-danger"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table id="transactionTable">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Tgl</th>
-                            <th>Kat</th>
-                            <th>Ket</th>
-                            <th>Tipe</th>
-                            <th>Jumlah</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionBody"></tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5">TOTAL</th>
-                            <th id="footerTotal">Rp 0</th>
-                            <th></th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+                let isToday = (iso === todayISO);
+                let rowClass = isToday ? 'row-today' : (i > 6 ? 'hidden-row' : '');
 
-        <!-- REKOMENDASI MAKANAN -->
-        <div class="food-recommend" id="foodRecommend">
-            🍔 Rekomendasi: Burger
-        </div>
+                body.innerHTML += `
+                    <tr class="${rowClass}">
+                        <td><b>${i+1}</b></td>
+                        <td>${curr.toLocaleDateString('id-ID', {day:'numeric', month:'short'})}</td>
+                        <td>${imsak}</td>
+                        <td>${subuh}</td>
+                        <td>${dzuhur}</td>
+                        <td>${ashar}</td>
+                        <td style="color:var(--gold); font-weight:bold">${maghrib}</td>
+                        <td>${isya}</td>
+                    </tr>
+                `;
 
-        <!-- FOOTER -->
-        <footer>
-            <p>© 2026 | <span id="footerYear"></span></p>
-        </footer>
-    </div>
+                if(isToday) {
+                    dash.innerHTML = `
+                        <div class="time-card"><span>Imsak</span><b>${imsak}</b></div>
+                        <div class="time-card"><span>Subuh</span><b>${subuh}</b></div>
+                        <div class="time-card"><span>Dzuhur</span><b>${dzuhur}</b></div>
+                        <div class="time-card"><span>Ashar</span><b>${ashar}</b></div>
+                        <div class="time-card" style="border:1px solid var(--gold)"><span>Maghrib</span><b>${maghrib}</b></div>
+                        <div class="time-card"><span>Isya</span><b>${isya}</b></div>
+                    `;
+                }
+            }
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+        let expanded = false;
+        function handleToggle() {
+            const wrapper = document.getElementById('scheduleWrapper');
+            const btn = document.getElementById('btnToggle');
+            expanded = !expanded;
+
+            if(expanded) {
+                wrapper.classList.add('active-expand');
+                btn.innerHTML = '<i class="fa-solid fa-chevron-up"></i> Sembunyikan';
+            } else {
+                wrapper.classList.remove('active-expand');
+                btn.innerHTML = '<i class="fa-solid fa-chevron-down"></i> Lihat Selengkapnya';
+                window.scrollTo({ top: wrapper.offsetTop - 50, behavior: 'smooth' });
+            }
+        }
+
+        // JAM DIGITAL
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('txtClock').innerText = now.toLocaleTimeString('id-ID');
+            document.getElementById('txtDate').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+        }, 1000);
+
+        initApp();
+    </script>
 </body>
 </html>
