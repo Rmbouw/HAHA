@@ -178,50 +178,54 @@
     </div>
 
     <script>
-        const refDate = 22; 
-        const baseSchedule = {
-            imsak: "04:30",
-            subuh: "04:40",
-            terbit: "05:54",
-            dzuhur: "12:08",
-            ashar: "15:16",
-            maghrib: "18:16",
-            isya: "19:26"
-        };
+    // refDate tetap ada agar tidak merusak fungsi addMins Anda
+    const refDate = 22; 
+    const baseSchedule = {
+        imsak: "04:30",
+        subuh: "04:40",
+        terbit: "05:54",
+        dzuhur: "12:08",
+        ashar: "15:16",
+        maghrib: "18:16",
+        isya: "19:26"
+    };
 
-        function addMins(timeStr, mins) {
-            let [h, m] = timeStr.split(':').map(Number);
-            let total = h * 60 + m + mins;
-            let nH = Math.floor(total / 60) % 24;
-            let nM = total % 60;
-            if (nH < 0) nH += 24;
-            return `${String(nH).padStart(2, '0')}:${String(nM).padStart(2, '0')}`;
-        }
+    function addMins(timeStr, mins) {
+        let [h, m] = timeStr.split(':').map(Number);
+        let total = h * 60 + m + mins;
+        let nH = Math.floor(total / 60) % 24;
+        let nM = total % 60;
+        if (nH < 0) nH += 24;
+        return `${String(nH).padStart(2, '0')}:${String(nM).padStart(2, '0')}`;
+    }
 
-        function toMinute(t){
-            if(!t) return 0;
-            let [h,m] = t.split(':').map(Number);
-            return h * 60 + m;
-        }
+    function toMinute(t){
+        if(!t) return 0;
+        let [h,m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('txtClock').innerText = now.toLocaleTimeString('id-ID', {hour12:false});
-            document.getElementById('txtDate').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-            const zone = new Intl.DateTimeFormat('id-ID', {timeZoneName:'short'}).formatToParts(now).find(p=>p.type==='timeZoneName').value;
-            document.getElementById('txtZoneName').innerText = "WAKTU LOKAL (" + zone + ")";
-        }
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('txtClock').innerText = now.toLocaleTimeString('id-ID', {hour12:false});
+        document.getElementById('txtDate').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+        const zone = new Intl.DateTimeFormat('id-ID', {timeZoneName:'short'}).formatToParts(now).find(p=>p.type==='timeZoneName').value;
+        document.getElementById('txtZoneName').innerText = "WAKTU LOKAL (" + zone + ")";
+    }
 
-        function initApp() {
+    function initApp() {
             const body = document.getElementById('tableBody');
             const dash = document.getElementById('dashToday');
-            // Ramadan 1447H diperkirakan mulai 19 Feb 2026
             const startDay = new Date(2026, 1, 19); 
-            const todayStr = new Date().toISOString().split('T')[0];
+            const realToday = new Date();
+            const todayStr = realToday.toDateString(); 
+
+            body.innerHTML = ""; 
 
             for (let i = 0; i < 30; i++) {
                 let curr = new Date(startDay);
                 curr.setDate(startDay.getDate() + i);
+                
                 let dayMasehi = curr.getDate();
                 let iso = curr.toISOString().split('T')[0];
                 let diff = dayMasehi - refDate;
@@ -237,8 +241,8 @@
                     isya: addMins(baseSchedule.isya, -offset)
                 };
 
-                let isToday = (iso === todayStr);
-                let rowClass = isToday ? 'row-today' : (i > 6 ? 'hidden-row' : '');
+                let isToday = (curr.toDateString() === todayStr);
+                let rowClass = isToday ? 'row-today' : (i > 6 && !isToday ? 'hidden-row' : '');
 
                 body.innerHTML += `
                     <tr class="${rowClass}">
@@ -253,7 +257,6 @@
                         <td>${sch.isya}</td>
                     </tr>
                 `;
-
                 if(isToday) {
                     dash.innerHTML = `
                         <div class="time-card"><span>Imsak</span><b>${sch.imsak}</b></div>
@@ -265,53 +268,55 @@
                     `;
                 }
             }
-            if(!dash.innerHTML) {
-                dash.innerHTML = `<div style="grid-column:1/-1; text-align:center;">Jadwal Ramadan 1447H</div>`;
+                if(!dash.innerHTML) {
+                dash.innerHTML = `<div style="grid-column:1/-1; text-align:center;">Ramadan Belum Dimulai</div>`;
             }
-                updateActivePrayer();
-        }
-
-        function updateActivePrayer(){
-            const now = new Date();
-            const nowMin = now.getHours() * 60 + now.getMinutes();
-            const cards = document.querySelectorAll('.time-card');
             
-            if(cards.length === 0) return;
-
-            let times = Array.from(cards).map(c => toMinute(c.querySelector('b').innerText));
-            let activeIndex = -1;
-
-            for(let i=0; i < times.length; i++){
-                let current = times[i];
-                let next = times[i+1] ? times[i+1] : 1440;
-
-                if(nowMin >= current && nowMin < next){
-                    activeIndex = i;
-                    break;
-                }
-            }
-
-            cards.forEach((c, idx) => {
-                if(idx === activeIndex) {
-                    c.classList.add('active');
-                } else {
-                    c.classList.remove('active');
-                }
-            });
+            updateActivePrayer();
         }
 
-        let expanded = false;
-        function handleToggle() {
-            const wrapper = document.getElementById('scheduleWrapper');
-            expanded = !expanded;
-            wrapper.classList.toggle('active-expand', expanded);
-            document.getElementById('btnToggle').innerText = expanded ? "Sembunyikan" : "Lihat Selenkapnya";
-        }
-        setInterval(updateClock, 1000);
-        setInterval(updateActivePrayer, 60000); 
+    function updateActivePrayer(){
+        const now = new Date();
+        const nowMin = now.getHours() * 60 + now.getMinutes();
+        const cards = document.querySelectorAll('.time-card');
         
-        updateClock();
-        initApp();
-    </script>
+        if(cards.length === 0) return;
+
+        let times = Array.from(cards).map(c => toMinute(c.querySelector('b').innerText));
+        let activeIndex = -1;
+
+        for(let i=0; i < times.length; i++){
+            let current = times[i];
+            let next = times[i+1] ? times[i+1] : 1440;
+
+            if(nowMin >= current && nowMin < next){
+                activeIndex = i;
+                break;
+            }
+        }
+
+        cards.forEach((c, idx) => {
+            if(idx === activeIndex) {
+                c.classList.add('active');
+            } else {
+                c.classList.remove('active');
+            }
+        });
+    }
+
+    let expanded = false;
+    function handleToggle() {
+        const wrapper = document.getElementById('scheduleWrapper');
+        expanded = !expanded;
+        wrapper.classList.toggle('active-expand', expanded);
+        document.getElementById('btnToggle').innerText = expanded ? "Sembunyikan" : "Lihat Selenkapnya";
+    }
+    
+    setInterval(updateClock, 1000);
+    setInterval(updateActivePrayer, 60000); 
+    
+    updateClock();
+    initApp();
+</script>
 </body>
 </html>
